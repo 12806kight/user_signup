@@ -24,12 +24,16 @@ user_form = """
         </label>
         <p>{password_error}</p>
         <br><br>
-
+        <label>Password2:
+          <input name="password2" type="text" value='{password2}' required>
+        </label>
+        <p>{password2_error}</p>
         <br><br>
-
-
-
-
+        <label>Email(optional):
+          <input name="email" type="text" value='{email}'>
+        </label>
+        <p>{email_error}</p>
+        <br><br>
 
         <input type="submit" value="Submit">
            
@@ -40,27 +44,46 @@ user_form = """
 
 @app.route("/")
 def index():
-    return user_form.format(username='', username_error='', password='', password_error='')
+    return user_form.format(username='', username_error='', password='', password_error='', password2='', password2_error='', email='', email_error='')
 
 @app.route("/", methods=['POST'])
 def validate():
 
     username = request.form['username']
     password = request.form['password']
+    password2 = request.form['password2']
+    email = request.form['email']
 
     username_error = ''
     password_error = ''
+    password2_error=''
+    email_error = ''
 
-    if len(username) < 3 or len(username) > 30:
+    if len(username) < 3 or len(username) > 20:
       username_error = 'Username should be inbetween 2 to 30 letters'
       username = ''
 
-    if len(password) < 3 or len(password) > 30:
+    if len(password) < 3 or len(password) > 20:
       password_error = 'Password Error'
       password = ''
 
-    if not username_error and not password_error:
-      return "Welcome, {{username}}"
+    if password2 != password:
+      password2_error = 'Passwords must match'
+      password2_error = ''
+    
+    if len(email) < 3 or len(email) > 20:
+      email_error = 'Not a valid email'
+      email = ''
+    if '@' not in email:
+      email_error = 'Not a valid email'
+    if '.' not in email:
+      email_error = 'Not a valid email'
+    if ' ' in email:
+      email_error = 'Not a valid email'      
+     
+    
+    if not username_error and not password_error and not password2_error and not email_error:
+      return "Success"
     else: 
-      return user_form.format(username_error=username_error, password_error=password_error, username=username, password=password)
+      return user_form.format(username_error=username_error, password_error=password_error, username=username, password=password, password2=password2, password2_error=password2_error, email=email, email_error=email_error)
 app.run()
