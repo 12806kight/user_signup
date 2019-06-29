@@ -1,50 +1,12 @@
-from flask import Flask, request
-
+from flask import Flask, request, render_template
+import cgi
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-
-user_form = """
-<!DOCTYPE html>
-
-<html>
-    <head>
-        <title>"User Signup"</title>
-    </head>
-    <body>
-      <form method="POST">
-        <label>Username:
-          <input name="username" type="text" value='{username}' required>
-        </label>
-        <p>{username_error}</p>
-        <br><br>
-        <label>Password:
-          <input name="password" type="text" value='{password}' required>
-        </label>
-        <p>{password_error}</p>
-        <br><br>
-        <label>Password2:
-          <input name="password2" type="text" value='{password2}' required>
-        </label>
-        <p>{password2_error}</p>
-        <br><br>
-        <label>Email(optional):
-          <input name="email" type="text" value='{email}'>
-        </label>
-        <p>{email_error}</p>
-        <br><br>
-
-        <input type="submit" value="Submit">
-           
-      </form>
-    </body>
-</html>
-"""
-
 @app.route("/")
 def index():
-    return user_form.format(username='', username_error='', password='', password_error='', password2='', password2_error='', email='', email_error='')
+    return render_template('home.html')
 
 @app.route("/", methods=['POST'])
 def validate():
@@ -74,16 +36,11 @@ def validate():
     if len(email) < 3 or len(email) > 20:
       email_error = 'Not a valid email'
       email = ''
-    if '@' not in email:
+    if '@' not in email or '.' not in email or ' ' in email:
       email_error = 'Not a valid email'
-    if '.' not in email:
-      email_error = 'Not a valid email'
-    if ' ' in email:
-      email_error = 'Not a valid email'      
-     
     
     if not username_error and not password_error and not password2_error and not email_error:
-      return "Success"
+      return render_template('welcome.html',username=username) 
     else: 
-      return user_form.format(username_error=username_error, password_error=password_error, username=username, password=password, password2=password2, password2_error=password2_error, email=email, email_error=email_error)
+      return render_template('home.html', username_error=username_error, password_error=password_error, username=username, password=password, password2=password2, password2_error=password2_error, email=email, email_error=email_error)
 app.run()
