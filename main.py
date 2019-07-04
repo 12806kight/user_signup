@@ -25,8 +25,17 @@ def validate():
       username_error = 'Username should be inbetween 2 to 30 letters'
       username = ''
 
-    if len(password) < 3 or len(password) > 20:
+    if ' ' in username:
+      username_error = 'Username error'
+      username = ''
+
+    if ' ' in password:
       password_error = 'Password Error'
+      password = ''
+
+
+    if len(password) < 3 or len(password) > 20:
+      password_error = 'Password should be inbetween 2 to 30 letters'
       password = ''
 
     if password2 != password:
